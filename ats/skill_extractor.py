@@ -14,15 +14,13 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 def extract_skills(text, source="resume"):
-    prompt = f"""
-You are an expert HR analyst.
+    prompt = f"""You are an expert HR analyst.
 Extract all technical skills from this {source} text.
 Return ONLY a Python list like: ['Python', 'SQL', 'Docker']
 No explanation. Just the list.
 
 Text:
-{text}
-"""
+{text}"""
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}]

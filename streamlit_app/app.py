@@ -33,7 +33,6 @@ if "ats_result" not in st.session_state:
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("Upload Files")
-
 resume_file = st.sidebar.file_uploader("Upload Resume PDF", type=["pdf"])
 
 if resume_file:
@@ -63,8 +62,6 @@ if page == "🏠 Dashboard":
                 jd_skills = extract_skills(st.session_state.jd_text, "job description")
                 result = calculate_ats_score(resume_skills, jd_skills)
                 st.session_state.ats_result = result
-                st.session_state.resume_skills = resume_skills
-                st.session_state.jd_skills = jd_skills
         if st.session_state.ats_result:
             result = st.session_state.ats_result
             col1, col2, col3 = st.columns(3)

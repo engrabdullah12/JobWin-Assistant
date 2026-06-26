@@ -6,11 +6,9 @@ load_dotenv(dotenv_path="D:/Ai-Recruitment-Copilot/AI-Recruitment-Copilot/.env")
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def router_agent(user_query, resume_text="", jd_text="", missing_skills=[]):
-    prompt = f"""
-You are a router. Based on the user query, decide which agent to call.
+    prompt = f"""You are a router. Based on the user query, decide which agent to call.
 Return ONLY one of these words: resume_agent, ats_agent, interview_agent, career_agent
-User Query: {user_query}
-"""
+User Query: {user_query}"""
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}]
