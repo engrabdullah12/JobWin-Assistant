@@ -1,6 +1,7 @@
 import streamlit as st
 import sys
 import os
+import pandas as pd
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ats.skill_extractor import extract_text_from_pdf, extract_skills
@@ -11,6 +12,7 @@ from agents.resume_agent import resume_agent
 from agents.router_agent import router_agent
 from rag.qdrant_store import create_collection, store_document
 from rag.retriever import ask_with_rag
+from cold_email.sender import load_recruiters, generate_email_body, send_cold_emails
 
 st.set_page_config(page_title="AI Recruitment Copilot", page_icon="🤖", layout="wide")
 
@@ -21,6 +23,7 @@ page = st.sidebar.radio("Navigate", [
     "✉️ Cover Letter",
     "❓ Interview Questions",
     "🗺️ Learning Roadmap",
+    "📧 Cold Email Sender",
     "💬 AI Chatbot"
 ])
 
@@ -30,6 +33,8 @@ if "jd_text" not in st.session_state:
     st.session_state.jd_text = ""
 if "ats_result" not in st.session_state:
     st.session_state.ats_result = None
+if "resume_skills" not in st.session_state:
+    st.session_state.resume_skills = []
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("Upload Files")
@@ -67,25 +72,22 @@ if page == "🏠 Dashboard":
                     jd_text=st.session_state.jd_text
                 )
                 st.session_state.ats_result = result
+                st.session_state.resume_skills = resume_skills
 
         if st.session_state.ats_result:
             result = st.session_state.ats_result
             st.markdown("### 📊 ATS Analysis Results")
-
             col1, col2, col3, col4, col5 = st.columns(5)
             col1.metric("🎯 Final Score", f"{result['ats_score']}%")
             col2.metric("🔑 Keywords", f"{result['keyword_score']}%")
             col3.metric("🧠 Semantic", f"{result['semantic_score']}%")
             col4.metric("💼 Experience", f"{result['experience_score']}%")
             col5.metric("🎓 Education", f"{result['education_score']}%")
-
             st.markdown("---")
             st.subheader("💼 Experience Analysis")
             st.info(result['experience_msg'])
-
             st.subheader("🎓 Education Analysis")
             st.info(result['education_msg'])
-
             st.subheader("📄 Resume Format Check")
             for issue in result['format_issues']:
                 if "✅" in issue:
@@ -96,7 +98,6 @@ if page == "🏠 Dashboard":
                 st.subheader("💡 Suggestions")
                 for suggestion in result['format_suggestions']:
                     st.warning(suggestion)
-
             st.markdown("---")
             col4, col5 = st.columns(2)
             with col4:
@@ -163,6 +164,64 @@ elif page == "🗺️ Learning Roadmap":
             st.markdown(roadmap)
     else:
         st.warning("Please run ATS Analysis from the Dashboard first.")
+
+elif page == "📧 Cold Email Sender":
+    st.title("📧 Cold Email Sender")
+    st.markdown("### Send personalized emails to multiple HRs automatically")
+    st.markdown("---")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        sender_email = st.text_input("Your Gmail", value="nehab3099@gmail.com")
+    with col2:
+        app_password = st.text_input("Gmail App Password", type="password")
+
+    excel_file = st.file_uploader("Upload HR Excel File", type=["xlsx"])
+    delay = st.slider("Delay between emails (seconds)", min_value=10, max_value=60, value=30)
+
+    if excel_file:
+        with open("data/uploads/recruiters.xlsx", "wb") as f:
+            f.write(excel_file.read())
+
+        df = load_recruiters("data/uploads/recruiters.xlsx")
+        st.success(f"Found {len(df)} valid HR emails!")
+        st.dataframe(df[["Company Name", "HR / Contact Person", "Email ID"]])
+
+        st.markdown("---")
+        st.subheader("📝 Email Preview")
+        if len(df) > 0:
+            sample_row = df.iloc[0]
+            preview = generate_email_body(
+                sample_row["HR / Contact Person"],
+                sample_row["Company Name"],
+                st.session_state.resume_skills
+            )
+            st.text_area("Sample Email", preview, height=300)
+
+        st.markdown("---")
+        if not st.session_state.resume_text:
+            st.warning("Please upload your resume from the sidebar first!")
+        elif not app_password:
+            st.warning("Please enter your Gmail App Password!")
+        else:
+            if st.button(f"🚀 Send Emails to All {len(df)} HRs"):
+                with st.spinner(f"Sending emails... This will take {len(df) * delay} seconds"):
+                    results, total = send_cold_emails(
+                        "data/uploads/recruiters.xlsx",
+                        "data/uploads/resume.pdf",
+                        sender_email,
+                        app_password,
+                        st.session_state.resume_skills,
+                        delay
+                    )
+
+                st.success(f"Done! Processed {total} emails.")
+                st.markdown("### 📊 Results")
+                for r in results:
+                    if "✅" in r['status']:
+                        st.success(f"{r['status']} → {r['hr_name']} | {r['company']} | {r['email']}")
+                    else:
+                        st.error(f"{r['status']} → {r['email']}")
 
 elif page == "💬 AI Chatbot":
     st.title("AI Career Chatbot")
