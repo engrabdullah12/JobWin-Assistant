@@ -20,12 +20,7 @@ def extract_email(text):
     emails = re.findall(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}', text)
     if not emails:
         return None
-    email = emails[0].strip().lower()
-    personal_domains = {"gmail.com","yahoo.com","hotmail.com","outlook.com","icloud.com","live.com","aol.com","protonmail.com"}
-    domain = email.split("@")[-1]
-    if domain in personal_domains:
-        return None
-    return email
+    return emails[0].strip().lower()
 
 def load_recruiters(excel_file):
     df = pd.read_excel(excel_file)
