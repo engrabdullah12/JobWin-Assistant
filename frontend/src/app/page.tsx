@@ -321,6 +321,17 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
+                    
+                    {/* Auto-Tailor Button */}
+                    <div className="pt-6 border-t border-gray-800 mt-8">
+                      <button 
+                        onClick={() => { setActiveTab("tailor"); handleTailorResume(); }} 
+                        className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-500 text-white font-bold py-4 rounded-xl transition flex justify-center items-center gap-2"
+                      >
+                        <FileSignature size={24} />
+                        Auto-Generate 1-Page Tailored Resume
+                      </button>
+                    </div>
                   </div>
                 )}
               </>

@@ -10,6 +10,8 @@ def tailor_resume(resume_text, jd_text):
     prompt = f"""You are an expert technical resume writer.
 Your task is to completely rewrite the candidate's resume to match the Job Description as closely as possible, while maintaining truthfulness (don't invent jobs they didn't do, but highlight relevant aspects).
 
+CRITICAL REQUIREMENT: The final resume MUST fit perfectly on a SINGLE PAGE. Condense descriptions, remove fluffy older jobs, and use concise, hard-hitting bullet points. Do not exceed 1 page of content.
+
 You MUST output the final resume as valid, self-contained HTML that EXACTLY mimics the design provided in the sample (a minimalist, professional template with centered header, lines separating sections, and clean typography).
 
 ### Job Description:
