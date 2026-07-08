@@ -7,6 +7,7 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-3.1-flash-lite")
 
 def tailor_resume(resume_text, jd_text):
+    prompt = f"""You are an expert technical resume writer.
 Your task is to completely rewrite the candidate's resume to match the Job Description as closely as possible, while maintaining truthfulness.
 
 CRITICAL REQUIREMENT: The final resume MUST fit perfectly on a SINGLE PAGE. Do NOT delete important details or jobs. Instead, achieve the 1-page limit by using compact styling (e.g., smaller fonts like 10pt/11px, tight line-height like 1.2, and minimal margins). 
