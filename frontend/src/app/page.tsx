@@ -3,7 +3,6 @@
 import { useState, useRef } from "react";
 import { FileText, Send, Briefcase, FileSearch, HelpCircle, Map, Upload, FileSignature } from "lucide-react";
 import { motion } from "framer-motion";
-import html2pdf from "html2pdf.js";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("upwork");
@@ -138,8 +137,9 @@ export default function Home() {
     setLoading(false);
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!tailoredResume) return;
+    const html2pdf = (await import("html2pdf.js")).default;
     const element = document.createElement("div");
     element.innerHTML = tailoredResume;
     const opt = {

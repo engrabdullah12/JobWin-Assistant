@@ -5,7 +5,6 @@ langchain-openai
 openai
 pdfplumber
 qdrant-client
-sentence-transformers
 python-dotenv
 tiktoken
 google-generativeai

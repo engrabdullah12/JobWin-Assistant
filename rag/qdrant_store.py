@@ -11,7 +11,7 @@ def create_collection():
     if COLLECTION_NAME not in existing:
         client.create_collection(
             collection_name=COLLECTION_NAME,
-            vectors_config=VectorParams(size=384, distance=Distance.COSINE)
+            vectors_config=VectorParams(size=768, distance=Distance.COSINE)
         )
 
 def store_document(text, metadata={}):

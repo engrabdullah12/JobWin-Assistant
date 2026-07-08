@@ -1,7 +1,14 @@
-from sentence_transformers import SentenceTransformer
+import google.generativeai as genai
+import os
+from dotenv import load_dotenv
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def get_embedding(text):
-    embedding = model.encode(text)
-    return embedding.tolist()
+    result = genai.embed_content(
+        model="models/embedding-001",
+        content=text,
+        task_type="retrieval_document"
+    )
+    return result['embedding']
