@@ -7,7 +7,7 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def get_embedding(text):
     result = genai.embed_content(
-        model="models/text-embedding-004",
+        model="models/gemini-embedding-2",
         content=text,
         task_type="retrieval_document"
     )
