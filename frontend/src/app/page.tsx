@@ -276,15 +276,64 @@ export default function Home() {
                   {loading ? "Analyzing..." : "Run ATS Scan"}
                 </button>
                 {atsResult && (
-                  <div className="mt-8 space-y-4">
-                    <div className="p-6 bg-gray-950 border border-gray-800 rounded-2xl flex justify-between items-center">
-                      <span className="text-xl font-bold">Overall ATS Score</span>
-                      <span className="text-3xl text-purple-400 font-extrabold">{atsResult.match_percentage}%</span>
+                  <div className="mt-8 space-y-6">
+                    {/* Top Scores */}
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                      <div className="p-4 bg-gray-950 border border-gray-800 rounded-2xl flex flex-col items-center justify-center">
+                        <span className="text-sm text-gray-400 mb-1">Final Score</span>
+                        <span className="text-2xl text-purple-400 font-extrabold">{atsResult.ats_score}%</span>
+                      </div>
+                      <div className="p-4 bg-gray-950 border border-gray-800 rounded-2xl flex flex-col items-center justify-center">
+                        <span className="text-sm text-gray-400 mb-1">Keywords</span>
+                        <span className="text-2xl text-blue-400 font-bold">{atsResult.keyword_score}%</span>
+                      </div>
+                      <div className="p-4 bg-gray-950 border border-gray-800 rounded-2xl flex flex-col items-center justify-center">
+                        <span className="text-sm text-gray-400 mb-1">Semantic</span>
+                        <span className="text-2xl text-pink-400 font-bold">{atsResult.semantic_score}%</span>
+                      </div>
+                      <div className="p-4 bg-gray-950 border border-gray-800 rounded-2xl flex flex-col items-center justify-center">
+                        <span className="text-sm text-gray-400 mb-1">Experience</span>
+                        <span className="text-2xl text-green-400 font-bold">{atsResult.experience_score}%</span>
+                      </div>
+                      <div className="p-4 bg-gray-950 border border-gray-800 rounded-2xl flex flex-col items-center justify-center">
+                        <span className="text-sm text-gray-400 mb-1">Education</span>
+                        <span className="text-2xl text-yellow-400 font-bold">{atsResult.education_score}%</span>
+                      </div>
                     </div>
-                    <div className="p-6 bg-gray-950 border border-gray-800 rounded-2xl">
-                      <h3 className="font-bold mb-2">Missing Skills</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {atsResult.missing_skills?.map((s: string) => <span key={s} className="bg-red-500/20 text-red-300 px-3 py-1 rounded-full text-sm">{s}</span>)}
+                    
+                    {/* Text Analyses */}
+                    <div className="space-y-4">
+                      <div className="p-4 bg-gray-900 border border-gray-800 rounded-xl">
+                        <h3 className="font-bold text-gray-300 mb-2">Experience Analysis</h3>
+                        <p className="text-gray-400">{atsResult.experience_msg}</p>
+                      </div>
+                      <div className="p-4 bg-gray-900 border border-gray-800 rounded-xl">
+                        <h3 className="font-bold text-gray-300 mb-2">Education Analysis</h3>
+                        <p className="text-gray-400">{atsResult.education_msg}</p>
+                      </div>
+                      <div className="p-4 bg-gray-900 border border-gray-800 rounded-xl">
+                        <h3 className="font-bold text-gray-300 mb-2">Resume Format Check</h3>
+                        {atsResult.format_issues?.map((issue: string, i: number) => (
+                           <p key={i} className={issue.includes('✅') ? "text-green-400 text-sm" : "text-red-400 text-sm"}>{issue}</p>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Skills */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="p-6 bg-gray-950 border border-gray-800 rounded-2xl">
+                        <h3 className="font-bold text-green-400 mb-4 flex items-center gap-2">✅ Matched Skills</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {atsResult.matched_skills?.map((s: string) => <span key={s} className="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm">{s}</span>)}
+                          {atsResult.matched_skills?.length === 0 && <span className="text-gray-500 text-sm">No matched skills.</span>}
+                        </div>
+                      </div>
+                      <div className="p-6 bg-gray-950 border border-gray-800 rounded-2xl">
+                        <h3 className="font-bold text-red-400 mb-4 flex items-center gap-2">❌ Missing Skills</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {atsResult.missing_skills?.map((s: string) => <span key={s} className="bg-red-500/20 text-red-300 px-3 py-1 rounded-full text-sm">{s}</span>)}
+                          {atsResult.missing_skills?.length === 0 && <span className="text-gray-500 text-sm">No missing skills!</span>}
+                        </div>
                       </div>
                     </div>
                   </div>
