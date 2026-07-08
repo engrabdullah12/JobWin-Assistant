@@ -139,46 +139,9 @@ export default function Home() {
 
   const handleDownloadPDF = () => {
     if (!tailoredResume) return;
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
-    
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Tailored_Resume</title>
-          <style>
-            body { 
-              font-family: 'Inter', system-ui, sans-serif; 
-              line-height: 1.6; 
-              color: #000; 
-              background: #fff; 
-              padding: 40px; 
-              max-width: 800px;
-              margin: 0 auto;
-            }
-            h1, h2, h3 { color: #111; border-bottom: 1px solid #eaeaea; padding-bottom: 4px; margin-top: 24px; }
-            ul { padding-left: 20px; }
-            li { margin-bottom: 8px; }
-            @media print {
-              body { padding: 0; }
-              @page { margin: 0.5in; }
-            }
-          </style>
-        </head>
-        <body>
-          ${tailoredResume}
-          <script>
-            window.onload = () => {
-              setTimeout(() => {
-                window.print();
-              }, 500);
-            }
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
+    // We trigger the native print dialog on the current window.
+    // We will add print CSS to hide everything except the resume preview.
+    window.print();
   };
 
   const tabs = [
