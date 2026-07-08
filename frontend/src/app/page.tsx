@@ -140,23 +140,23 @@ export default function Home() {
   const handleDownloadPDF = async () => {
     if (!tailoredResume) return;
     const html2pdf = (await import("html2pdf.js")).default;
-    const element = document.createElement("div");
-    element.innerHTML = tailoredResume;
-    element.style.position = "absolute";
-    element.style.left = "-9999px";
-    element.style.top = "0";
-    document.body.appendChild(element);
-
+    const element = document.getElementById("resume-preview-container");
+    if (!element) return;
+    
     const opt = {
       margin:       0.5,
       filename:     'Tailored_Resume.pdf',
       image:        { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas:  { scale: 2 },
+      html2canvas:  { scale: 2, useCORS: true },
       jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
-    html2pdf().set(opt as any).from(element).save().then(() => {
-      document.body.removeChild(element);
-    });
+    
+    // We clone it just in case html2pdf mutates it, but we render the clone offscreen safely
+    const clone = element.cloneNode(true) as HTMLElement;
+    clone.style.padding = "20px";
+    clone.style.background = "white";
+    clone.style.color = "black";
+    html2pdf().set(opt as any).from(clone).save();
   };
 
   const tabs = [
@@ -401,7 +401,7 @@ export default function Home() {
                 </div>
                 {tailoredResume && (
                   <div className="mt-8 bg-white text-black p-8 rounded-xl shadow-inner max-h-[800px] overflow-y-auto">
-                    <div dangerouslySetInnerHTML={{ __html: tailoredResume }} />
+                    <div id="resume-preview-container" dangerouslySetInnerHTML={{ __html: tailoredResume }} />
                   </div>
                 )}
               </>
