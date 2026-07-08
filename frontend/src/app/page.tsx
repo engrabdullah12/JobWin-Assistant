@@ -137,22 +137,48 @@ export default function Home() {
     setLoading(false);
   };
 
-  const handleDownloadPDF = async () => {
+  const handleDownloadPDF = () => {
     if (!tailoredResume) return;
-    const html2pdf = (await import("html2pdf.js")).default;
-    const element = document.getElementById("resume-preview-container");
-    if (!element) return;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
     
-    const opt = {
-      margin:       0.5,
-      filename:     'Tailored_Resume.pdf',
-      image:        { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-    
-    // Pass the live element directly because html2canvas requires the element to be in the DOM
-    html2pdf().set(opt as any).from(element).save();
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Tailored_Resume</title>
+          <style>
+            body { 
+              font-family: 'Inter', system-ui, sans-serif; 
+              line-height: 1.6; 
+              color: #000; 
+              background: #fff; 
+              padding: 40px; 
+              max-width: 800px;
+              margin: 0 auto;
+            }
+            h1, h2, h3 { color: #111; border-bottom: 1px solid #eaeaea; padding-bottom: 4px; margin-top: 24px; }
+            ul { padding-left: 20px; }
+            li { margin-bottom: 8px; }
+            @media print {
+              body { padding: 0; }
+              @page { margin: 0.5in; }
+            }
+          </style>
+        </head>
+        <body>
+          ${tailoredResume}
+          <script>
+            window.onload = () => {
+              setTimeout(() => {
+                window.print();
+              }, 500);
+            }
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
   };
 
   const tabs = [
