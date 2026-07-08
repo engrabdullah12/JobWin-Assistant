@@ -1,9 +1,10 @@
-from groq import Groq
+import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path="D:/Ai-Recruitment-Copilot/AI-Recruitment-Copilot/.env")
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel("gemini-3.1-flash-lite")
 
 def resume_agent(resume_text):
     prompt = f"""You are an expert resume reviewer.
@@ -13,8 +14,5 @@ Analyze this resume and provide:
 3. Weaknesses
 4. Suggestions to improve
 Resume: {resume_text}"""
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content.strip()
+    response = model.generate_content(prompt)
+    return response.text.strip()

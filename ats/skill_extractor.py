@@ -1,10 +1,11 @@
 import pdfplumber
-from groq import Groq
+import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path="D:/Ai-Recruitment-Copilot/AI-Recruitment-Copilot/.env")
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel("gemini-3.1-flash-lite")
 
 def extract_text_from_pdf(pdf_path):
     text = ""
@@ -21,10 +22,13 @@ No explanation. Just the list.
 
 Text:
 {text}"""
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    raw = response.choices[0].message.content.strip()
-    skills = eval(raw)
+    response = model.generate_content(prompt)
+    raw = response.text.strip()
+    # Handle possible markdown formatting
+    if raw.startswith("```"):
+        raw = "\n".join(raw.split("\n")[1:-1]).strip()
+    try:
+        skills = eval(raw)
+    except Exception:
+        skills = []
     return skills
