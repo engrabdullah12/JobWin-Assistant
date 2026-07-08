@@ -154,9 +154,9 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden print-root">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col gap-6">
+      <div className="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col gap-6 no-print">
         <div className="flex items-center gap-3 text-xl font-bold text-blue-400">
           <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">🤖</div>
           Copilot
@@ -180,15 +180,15 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-8 relative">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none no-print" />
         
         <div className="max-w-4xl mx-auto relative z-10 space-y-8">
-          <header>
+          <header className="no-print">
             <h1 className="text-4xl font-extrabold tracking-tight">AI Career Suite</h1>
             <p className="text-gray-400 mt-2 text-lg">Secure jobs faster with intelligent proposals and deep analysis.</p>
           </header>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6 no-print">
             <div className="space-y-2 relative">
               <div className="flex justify-between items-center">
                 <label className="text-sm font-semibold text-gray-300">Resume Content</label>
@@ -378,14 +378,14 @@ export default function Home() {
 
             {activeTab === "tailor" && (
               <>
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center gap-4 mb-6 no-print">
                   <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center"><FileSignature className="text-blue-400" size={24} /></div>
                   <div>
                     <h2 className="text-2xl font-bold">Resume Tailor (PDF)</h2>
                     <p className="text-gray-400">Automatically rewrite and format your resume to perfectly match the JD.</p>
                   </div>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-4 no-print">
                   <button onClick={handleTailorResume} disabled={loading || !resumeText || !jdText} className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition">
                     {loading ? "Generating Tailored Resume..." : "Tailor Resume"}
                   </button>
@@ -396,7 +396,7 @@ export default function Home() {
                   )}
                 </div>
                 {tailoredResume && (
-                  <div className="mt-8 bg-white text-black p-8 rounded-xl shadow-inner max-h-[800px] overflow-y-auto">
+                  <div className="print-container mt-8 bg-white text-black p-8 rounded-xl shadow-inner max-h-[800px] overflow-y-auto">
                     <div id="resume-preview-container" dangerouslySetInnerHTML={{ __html: tailoredResume }} />
                   </div>
                 )}
