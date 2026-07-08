@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FileText, Send, Briefcase, FileSearch, HelpCircle, Map, Upload, FileSignature } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -23,6 +23,35 @@ export default function Home() {
   const [questions, setQuestions] = useState("");
   const [roadmap, setRoadmap] = useState("");
   const [tailoredResume, setTailoredResume] = useState("");
+  const [bookmarkletHref, setBookmarkletHref] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const origin = window.location.origin;
+      const code = `javascript:(function(){
+        const jd = document.querySelector('.fe-proposal-job-description, .job-description, [data-qa="job-description"], .cfe-ui-job-details-content')?.innerText || document.body.innerText;
+        let hireRate = "Unknown";
+        document.querySelectorAll('li, div').forEach(el => {
+          if(el.innerText.toLowerCase().includes('hire rate')) {
+            const match = el.innerText.match(/\\d+%/);
+            if(match) hireRate = match[0];
+          }
+        });
+        const paymentVerified = document.body.innerText.toLowerCase().includes('payment verified') ? 'true' : 'false';
+        const url = '${origin}/?jd=' + encodeURIComponent(jd) + '&rate=' + encodeURIComponent(hireRate) + '&payment=' + paymentVerified;
+        window.open(url, '_blank');
+      })();`;
+      setBookmarkletHref(code);
+      
+      const params = new URLSearchParams(window.location.search);
+      const jd = params.get("jd");
+      const rate = params.get("rate");
+      const payment = params.get("payment");
+      if (jd) setJdText(decodeURIComponent(jd));
+      if (rate) setHiringRate(decodeURIComponent(rate));
+      if (payment) setPaymentVerified(payment === "true");
+    }
+  }, []);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -244,6 +273,22 @@ export default function Home() {
                 <button onClick={handleGenerateProposal} disabled={loading || !resumeText || !jdText} className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition">
                   {loading ? "Analyzing Client & Writing Proposal..." : "Generate Premium Proposal"}
                 </button>
+
+                {/* Bookmarklet Section */}
+                <div className="mt-6 p-5 bg-blue-950/40 border border-blue-900/60 rounded-2xl">
+                  <h4 className="text-sm font-bold text-blue-400 mb-1 flex items-center gap-2">⚡ Upwork 1-Click Import</h4>
+                  <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+                    Drag this button to your browser's Bookmarks bar. Open any job on Upwork, click the bookmark, and this app will open with the job details already loaded!
+                  </p>
+                  <a
+                    href={bookmarkletHref || "#"}
+                    className="inline-flex items-center gap-2 text-xs bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl font-bold cursor-grab active:cursor-grabbing transition shadow-lg shadow-blue-900/30"
+                    onClick={(e) => { if (!bookmarkletHref) e.preventDefault(); }}
+                  >
+                    🚀 Import to JobWin
+                  </a>
+                </div>
+
                 {proposal && <div className="mt-8 p-6 bg-gray-950 border border-gray-800 rounded-2xl"><pre className="whitespace-pre-wrap font-sans text-gray-300">{proposal}</pre></div>}
               </>
             )}

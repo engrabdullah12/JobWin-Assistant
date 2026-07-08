@@ -7,26 +7,29 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-3.1-flash-lite")
 
 def generate_upwork_proposal(resume_text, jd_text, hiring_rate="Unknown", payment_verified=True, other_notes=""):
-    prompt = f"""You are an expert Upwork freelancer with a 100% Job Success Score. 
-Your goal is to write a highly converting, professional, and personalized Upwork proposal based on the provided Job Description and the candidate's Resume.
+    prompt = f"""You are an elite Upwork Freelancer with a 100% Job Success Score and millions of dollars earned.
+Your goal is to write a highly customized, high-converting Upwork proposal based on the Job Description and the candidate's Resume.
 
-### Job Context:
-- **Hiring Rate of Client:** {hiring_rate}
+### Modern Upwork Proposal Rules (Researched):
+1. **The First 2 Lines (The Hook):** Clients only see the first two lines of a proposal in their list. NEVER start with generic introductions like "Hi, my name is..." or "I am a senior developer...". Instead, start with a direct hook about their project, showing you understand their problem immediately (e.g. "I can fix your Next.js hydration error today...", or "Here is how I would approach building your custom API...").
+2. **Conciseness is King:** Keep the proposal under 250 words. Busy clients scan proposals. Use bullet points for structural clarity.
+3. **Relevance over Resume:** Selectively highlight only 2-3 specific accomplishments or skills from the resume that directly solve the client's biggest pain points in the JD.
+4. **Call to Action (CTA):** End with a low-friction question or call to action (e.g., "Do you have a preferred API provider, or should we use OpenAI?", "Let's do a quick chat to map out the scope.").
+5. **No AI Clichés:** Avoid generic corporate jargon, exclamation mark overload, and placeholders. Be conversational, direct, and professional.
+
+### Inputs:
+- **Client Hiring Rate:** {hiring_rate}
 - **Payment Verified:** {"Yes" if payment_verified else "No"}
 - **Other Job Notes:** {other_notes}
-
-### Job Description:
+- **Job Description:**
 {jd_text}
-
-### Candidate's Resume:
+- **Candidate's Resume:**
 {resume_text}
 
-### Instructions:
-1. **The Proposal:** Write a concise, engaging proposal. Start with a hook, show how the candidate's skills (from the resume) directly solve the client's problems (from the JD), and end with a strong call to action. Keep it under 300 words. Do not use generic greetings like "Dear Hiring Manager", try to be conversational and direct.
-2. **Analysis & Strategy (Internal):** Briefly analyze if this is a good client to apply to based on the Hiring Rate and Payment Verified status.
-3. **Suggested Attachments:** Provide a bulleted list of 2-3 specific portfolio items or documents the candidate should attach to this proposal to maximize their chances.
-
-Return the response clearly formatted in Markdown with headings for 'Proposal', 'Client Analysis', and 'Suggested Attachments'.
+### Output Format (Markdown):
+1. **## Client Quality Analysis** (A 1-2 sentence quick check of whether the client's metrics make them a safe and high-paying lead).
+2. **## Proposal** (The actual proposal text, ready to copy-paste).
+3. **## Recommended Attachments & Next Steps** (2 specific files or portfolio screenshots from the resume they should attach, plus 1 question to ask the client).
 """
     response = model.generate_content(prompt)
     return response.text.strip()
