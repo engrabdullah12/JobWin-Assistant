@@ -1,33 +1,18 @@
 @import "tailwindcss";
 
 @media print {
-  @page {
-    margin: 0;
+  body * {
+    visibility: hidden;
   }
-  
-  /* Reset layout constraints for printing */
-  html, body, .print-root, main {
-    height: auto !important;
-    overflow: visible !important;
-    background: white !important;
-    color: black !important;
+  #resume-preview-container, #resume-preview-container * {
+    visibility: visible;
   }
-
-  /* Hide everything except the resume preview container */
-  .no-print {
-    display: none !important;
-  }
-
-  /* Force only the container to show and expand naturally */
   #resume-preview-container {
     position: absolute;
     left: 0;
     top: 0;
-    width: 100% !important;
-    height: auto !important;
-    overflow: visible !important;
-    padding: 0.75in !important;
-    background: white !important;
+    width: 100%;
     color: black !important;
+    background: white !important;
   }
 }
