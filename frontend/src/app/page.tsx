@@ -151,12 +151,8 @@ export default function Home() {
       jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
     
-    // We clone it just in case html2pdf mutates it, but we render the clone offscreen safely
-    const clone = element.cloneNode(true) as HTMLElement;
-    clone.style.padding = "20px";
-    clone.style.background = "white";
-    clone.style.color = "black";
-    html2pdf().set(opt as any).from(clone).save();
+    // Pass the live element directly because html2canvas requires the element to be in the DOM
+    html2pdf().set(opt as any).from(element).save();
   };
 
   const tabs = [
