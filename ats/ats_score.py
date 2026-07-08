@@ -1,12 +1,19 @@
-from sentence_transformers import SentenceTransformer, util
+import math
 import re
+from rag.embeddings import get_embedding
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+def cosine_similarity(v1, v2):
+    dot_product = sum(a * b for a, b in zip(v1, v2))
+    magnitude1 = math.sqrt(sum(a * a for a in v1))
+    magnitude2 = math.sqrt(sum(b * b for b in v2))
+    if magnitude1 == 0 or magnitude2 == 0:
+        return 0.0
+    return dot_product / (magnitude1 * magnitude2)
 
 def semantic_similarity(resume_text, jd_text):
-    resume_embedding = model.encode(resume_text, convert_to_tensor=True)
-    jd_embedding = model.encode(jd_text, convert_to_tensor=True)
-    similarity = util.cos_sim(resume_embedding, jd_embedding)
+    resume_embedding = get_embedding(resume_text)
+    jd_embedding = get_embedding(jd_text)
+    similarity = cosine_similarity(resume_embedding, jd_embedding)
     return round(float(similarity) * 100, 2)
 
 def extract_years_required(jd_text):
