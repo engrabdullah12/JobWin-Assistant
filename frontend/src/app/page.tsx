@@ -142,6 +142,11 @@ export default function Home() {
     const html2pdf = (await import("html2pdf.js")).default;
     const element = document.createElement("div");
     element.innerHTML = tailoredResume;
+    element.style.position = "absolute";
+    element.style.left = "-9999px";
+    element.style.top = "0";
+    document.body.appendChild(element);
+
     const opt = {
       margin:       0.5,
       filename:     'Tailored_Resume.pdf',
@@ -149,7 +154,9 @@ export default function Home() {
       html2canvas:  { scale: 2 },
       jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
-    html2pdf().set(opt as any).from(element).save();
+    html2pdf().set(opt as any).from(element).save().then(() => {
+      document.body.removeChild(element);
+    });
   };
 
   const tabs = [
