@@ -8,3 +8,5 @@ qdrant-client
 python-dotenv
 tiktoken
 google-generativeai
+weasyprint
+PyPDF2

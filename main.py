@@ -95,8 +95,10 @@ async def upwork_proposal(req: UpworkRequest):
 
 @app.post("/api/tailor_resume")
 async def api_tailor_resume(req: JDRequest):
-    html_resume = tailor_resume(req.resume_text, req.jd_text)
-    return {"html": html_resume}
+    import base64
+    html_resume, pdf_bytes = tailor_resume(req.resume_text, req.jd_text)
+    pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
+    return {"html": html_resume, "pdf": pdf_base64}
 
 @app.post("/api/chat")
 async def chat(req: ChatRequest):
