@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { FileText, Send, Briefcase, FileSearch, HelpCircle, Map, Upload, FileSignature } from "lucide-react";
+import { FileText, Send, Briefcase, FileSearch, HelpCircle, Map, Upload, FileSignature, Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("upwork");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [resumeText, setResumeText] = useState("");
   const [jdText, setJdText] = useState("");
   
@@ -183,19 +184,55 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Sidebar */}
-      <div className="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col gap-6">
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
+      {/* Mobile Header */}
+      <header className="md:hidden flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800 text-white z-30">
         <div className="flex items-center gap-3 text-xl font-bold text-blue-400">
           <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">🤖</div>
-          Copilot
+          <span>Copilot</span>
+        </div>
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition"
+        >
+          <Menu size={20} />
+        </button>
+      </header>
+
+      {/* Sidebar Backdrop for Mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col gap-6 transform ${
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+      } md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 text-xl font-bold text-blue-400">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">🤖</div>
+            Copilot
+          </div>
+          {/* Mobile Close Button */}
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="md:hidden p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         <nav className="flex flex-col gap-2 mt-4">
           {tabs.map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setIsSidebarOpen(false);
+              }}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                 activeTab === tab.id ? "bg-blue-600 text-white shadow-lg shadow-blue-900/50" : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
               }`}
@@ -217,7 +254,7 @@ export default function Home() {
             <p className="text-gray-400 mt-2 text-lg">Secure jobs faster with intelligent proposals and deep analysis.</p>
           </header>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2 relative">
               <div className="flex justify-between items-center">
                 <label className="text-sm font-semibold text-gray-300">Resume Content</label>
@@ -257,7 +294,7 @@ export default function Home() {
                     <p className="text-gray-400">Craft a personalized proposal analyzing client metrics.</p>
                   </div>
                 </div>
-                <div className="flex gap-4 mb-6">
+                <div className="flex flex-col md:flex-row gap-4 mb-6">
                   <div className="flex-1 space-y-2">
                     <label className="text-sm text-gray-400">Client Hiring Rate</label>
                     <input type="text" value={hiringRate} onChange={e => setHiringRate(e.target.value)} className="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 outline-none" />
@@ -308,7 +345,7 @@ export default function Home() {
                 {atsResult && (
                   <div className="mt-8 space-y-6">
                     {/* Top Scores */}
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                       <div className="p-4 bg-gray-950 border border-gray-800 rounded-2xl flex flex-col items-center justify-center">
                         <span className="text-sm text-gray-400 mb-1">Final Score</span>
                         <span className="text-2xl text-purple-400 font-extrabold">{atsResult.ats_score}%</span>
@@ -419,7 +456,7 @@ export default function Home() {
                     <p className="text-gray-400">Automatically rewrite and format your resume to perfectly match the JD.</p>
                   </div>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <button onClick={handleTailorResume} disabled={loading || !resumeText || !jdText} className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition">
                     {loading ? "Generating Tailored Resume..." : "Tailor Resume"}
                   </button>
