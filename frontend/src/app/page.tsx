@@ -24,7 +24,6 @@ export default function Home() {
   const [questions, setQuestions] = useState("");
   const [roadmap, setRoadmap] = useState("");
   const [tailoredResume, setTailoredResume] = useState("");
-  const [tailoredPdf, setTailoredPdf] = useState("");
   const [bookmarkletHref, setBookmarkletHref] = useState("");
 
   useEffect(() => {
@@ -164,19 +163,15 @@ export default function Home() {
       });
       const data = await res.json();
       setTailoredResume(data.html);
-      setTailoredPdf(data.pdf);
     } catch (e) { alert("Error tailoring resume."); }
     setLoading(false);
   };
 
   const handleDownloadPDF = () => {
-    if (!tailoredPdf) return;
-    const link = document.createElement("a");
-    link.href = `data:application/pdf;base64,${tailoredPdf}`;
-    link.download = "Tailored_Resume.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (!tailoredResume) return;
+    // We trigger the native print dialog on the current window.
+    // We will add print CSS to hide everything except the resume preview.
+    window.print();
   };
 
   const tabs = [
