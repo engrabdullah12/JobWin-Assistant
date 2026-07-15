@@ -1,3 +1,4 @@
+import io
 import pdfplumber
 import google.generativeai as genai
 import os
@@ -7,10 +8,12 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-3.1-flash-lite")
 
-def extract_text_from_pdf(pdf_path):
+def extract_text_from_pdf(pdf_input):
     text = ""
     try:
-        with pdfplumber.open(pdf_path) as pdf:
+        # Support both file path and bytes
+        pdf_file = io.BytesIO(pdf_input) if isinstance(pdf_input, bytes) else pdf_input
+        with pdfplumber.open(pdf_file) as pdf:
             for page in pdf.pages:
                 text += page.extract_text() or ""
     except Exception as e:
@@ -20,8 +23,11 @@ def extract_text_from_pdf(pdf_path):
     if len(text.strip()) < 50:
         try:
             print("pdfplumber returned insufficient text. Falling back to Gemini inline PDF parser...")
-            with open(pdf_path, "rb") as f:
-                pdf_bytes = f.read()
+            if isinstance(pdf_input, bytes):
+                pdf_bytes = pdf_input
+            else:
+                with open(pdf_input, "rb") as f:
+                    pdf_bytes = f.read()
             
             response = model.generate_content([
                 {

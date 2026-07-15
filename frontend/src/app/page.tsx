@@ -72,9 +72,15 @@ export default function Home() {
         body: formData,
       });
       const data = await res.json();
-      setResumeText(data.text);
+      if (data.error) {
+        alert(`Error extracting text: ${data.error}`);
+      } else if (!data.text) {
+        alert("Upload succeeded but no text could be extracted. Please paste your resume text manually or try a different file.");
+      } else {
+        setResumeText(data.text);
+      }
     } catch (error) {
-      alert("Error uploading file.");
+      alert("Error uploading file. Please check your connection and try again.");
     }
     setUploading(false);
   };

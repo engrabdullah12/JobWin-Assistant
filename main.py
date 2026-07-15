@@ -48,12 +48,12 @@ class ChatRequest(BaseModel):
 
 @app.post("/api/upload_resume")
 async def upload_resume(file: UploadFile = File(...)):
-    os.makedirs("data/uploads", exist_ok=True)
-    file_path = f"data/uploads/{file.filename}"
-    with open(file_path, "wb") as f:
-        shutil.copyfileobj(file.file, f)
-    text = extract_text_from_pdf(file_path)
-    return {"text": text}
+    try:
+        file_bytes = await file.read()
+        text = extract_text_from_pdf(file_bytes)
+        return {"text": text}
+    except Exception as e:
+        return {"error": str(e), "text": ""}
 
 @app.post("/api/resume_analysis")
 async def analyze_resume(req: JDRequest):
