@@ -8,19 +8,46 @@ model = genai.GenerativeModel("gemini-3.1-flash-lite")
 
 import re
 
+from datetime import datetime
+
 DEFAULT_CONTACT_INFO = """Muhammad Abdullah
 Phone: +923027435603
 Email: engr.abdullah1212@gmail.com
 LinkedIn: www.linkedin.com/in/engr-m-abdullah-27b620333"""
 
 def clean_cover_letter(text):
-    # Remove markdown bolding and italics asterisks
-    text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
-    text = re.sub(r'\*(.*?)\*', r'\1', text)
-    # Remove horizontal rule lines like *** or ---
+    # Remove preamble intro sentences if LLM added them
+    text = re.sub(r'^(To provide|I have drafted|Here is|Below is|Draft:).*?\n\n', '', text, flags=re.IGNORECASE | re.DOTALL)
+    
+    # Replace all bracketed contact placeholders
+    text = re.sub(r'\[Your Name\]', 'Muhammad Abdullah', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[Your Phone Number\]|\[Your Phone\]|\[Phone Number\]|\[Phone\]', '+923027435603', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[Your Email\]|\[Email\]', 'engr.abdullah1212@gmail.com', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[Your LinkedIn Profile\]|\[Your LinkedIn\]|\[LinkedIn Profile\]|\[LinkedIn\]', 'www.linkedin.com/in/engr-m-abdullah-27b620333', text, flags=re.IGNORECASE)
+    
+    today_str = datetime.now().strftime("%B %d, %Y")
+    text = re.sub(r'\[Date\]', today_str, text, flags=re.IGNORECASE)
+    text = re.sub(r'\[Hiring Manager Name\]|\[Hiring Manager\]', 'Hiring Manager', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[Company Name\]', 'the Company', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[Number\]|\[Number of years\]|\[X\]', '5+', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[Current/Previous Company\]|\[Previous Company\]', 'my previous role', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[Telecommunications/Tech\]|\[Industry\]', 'AI & Technology', text, flags=re.IGNORECASE)
+    
+    # Remove any remaining generic bracket placeholders like [Anything]
+    text = re.sub(r'\[[a-zA-Z0-9\s/_\-]+\]', '', text)
+    
+    # Strip markdown bolding and italic asterisks completely
+    text = re.sub(r'\*{1,3}', '', text)
+    
+    # Strip horizontal rules or lines consisting only of hyphens/dashes/asterisks
     text = re.sub(r'^\s*[\*\-_]{3,}\s*$', '', text, flags=re.MULTILINE)
-    # Remove preamble lines if any
-    text = re.sub(r'^(Here is|To provide|I have drafted|Below is|Draft:).*?\n\n', '', text, flags=re.IGNORECASE | re.DOTALL)
+    
+    # Ensure contact header is at the top if missing
+    if "Muhammad Abdullah" not in text:
+        text = f"{DEFAULT_CONTACT_INFO}\n\n{text}"
+
+    # Clean multiple consecutive blank lines
+    text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
 
 def generate_cover_letter(resume_text, jd_text):
