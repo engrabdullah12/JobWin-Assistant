@@ -263,27 +263,40 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2 relative">
               <div className="flex justify-between items-center">
-                <label className="text-sm font-semibold text-gray-300">Resume Content</label>
+                <label className="text-sm font-semibold text-gray-300">
+                  Resume Content
+                  {(activeTab === "tailor" || activeTab === "ats") ? (
+                    <span className="text-xs text-blue-400 font-normal ml-2 font-medium">(PDF Upload Required)</span>
+                  ) : (
+                    <span className="text-xs text-gray-400 font-normal ml-2">(Optional for Cover Letter)</span>
+                  )}
+                </label>
                 <input type="file" accept=".pdf" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
                 <button 
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1 rounded-lg flex items-center gap-2 transition"
+                  className={`text-xs px-3 py-1 rounded-lg flex items-center gap-2 transition ${
+                    (activeTab === "tailor" || activeTab === "ats") 
+                      ? "bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-md" 
+                      : "bg-gray-800 hover:bg-gray-700 text-gray-300"
+                  }`}
                 >
                   <Upload size={14} /> {uploading ? "Extracting..." : "Upload PDF"}
                 </button>
               </div>
               <textarea 
                 className="w-full h-32 bg-gray-900/50 border border-gray-700 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-600"
-                placeholder="Paste your resume or upload a PDF..."
+                placeholder={activeTab === "cover" ? "Paste resume (Optional)..." : "Paste your resume or upload a PDF..."}
                 value={resumeText}
                 onChange={e => setResumeText(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-300">Job Description</label>
+              <label className="text-sm font-semibold text-gray-300">
+                Job Application / Description <span className="text-red-400">*</span>
+              </label>
               <textarea 
                 className="w-full h-32 bg-gray-900/50 border border-gray-700 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-600"
-                placeholder="Paste the target JD here..."
+                placeholder="Paste the job application or target JD here..."
                 value={jdText}
                 onChange={e => setJdText(e.target.value)}
               />
@@ -418,9 +431,12 @@ export default function Home() {
               <>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-2xl bg-orange-500/20 flex items-center justify-center"><FileText className="text-orange-400" size={24} /></div>
-                  <div><h2 className="text-2xl font-bold">Cover Letter</h2></div>
+                  <div>
+                    <h2 className="text-2xl font-bold">Cover Letter Generator</h2>
+                    <p className="text-gray-400 text-sm">Generate a tailored cover letter using just the Job Application, or include your Resume for extra personalization.</p>
+                  </div>
                 </div>
-                <button onClick={handleCoverLetter} disabled={loading || !resumeText || !jdText} className="w-full bg-orange-600 hover:bg-orange-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition">
+                <button onClick={handleCoverLetter} disabled={loading || !jdText} className="w-full bg-orange-600 hover:bg-orange-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition">
                   {loading ? "Writing Letter..." : "Generate Cover Letter"}
                 </button>
                 {coverLetter && <div className="mt-8 p-6 bg-gray-950 border border-gray-800 rounded-2xl"><pre className="whitespace-pre-wrap font-sans text-gray-300">{coverLetter}</pre></div>}

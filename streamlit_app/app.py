@@ -124,8 +124,9 @@ elif page == "📄 Resume Analysis":
 
 elif page == "✉️ Cover Letter":
     st.title("Cover Letter Generator")
+    st.markdown("Generate a cover letter using just the Job Application / JD, or upload a resume for extra personalization.")
     st.markdown("---")
-    if st.session_state.resume_text and st.session_state.jd_text:
+    if st.session_state.jd_text:
         if st.button("Generate Cover Letter"):
             with st.spinner("Writing cover letter..."):
                 letter = generate_cover_letter(
@@ -135,7 +136,7 @@ elif page == "✉️ Cover Letter":
             st.text_area("Your Cover Letter", letter, height=400)
             st.download_button("Download", letter, file_name="cover_letter.txt")
     else:
-        st.warning("Please upload Resume and paste JD from the sidebar first.")
+        st.warning("Please paste Job Description / Application from the sidebar first.")
 
 elif page == "❓ Interview Questions":
     st.title("Interview Question Generator")

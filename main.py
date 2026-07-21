@@ -27,7 +27,7 @@ app.add_middleware(
 )
 
 class JDRequest(BaseModel):
-    resume_text: str
+    resume_text: Optional[str] = ""
     jd_text: str
 
 class RoadmapRequest(BaseModel):
