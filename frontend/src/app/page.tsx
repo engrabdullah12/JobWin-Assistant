@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { FileText, Send, Briefcase, FileSearch, HelpCircle, Map, Upload, FileSignature, Menu, X } from "lucide-react";
+import { FileText, Send, Briefcase, FileSearch, HelpCircle, Map, Upload, FileSignature, Menu, X, Copy, Check } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Home() {
@@ -21,6 +21,7 @@ export default function Home() {
   // Other features states
   const [atsResult, setAtsResult] = useState<any>(null);
   const [coverLetter, setCoverLetter] = useState("");
+  const [copiedCover, setCopiedCover] = useState(false);
   const [questions, setQuestions] = useState("");
   const [roadmap, setRoadmap] = useState("");
   const [tailoredResume, setTailoredResume] = useState("");
@@ -433,13 +434,31 @@ export default function Home() {
                   <div className="w-12 h-12 rounded-2xl bg-orange-500/20 flex items-center justify-center"><FileText className="text-orange-400" size={24} /></div>
                   <div>
                     <h2 className="text-2xl font-bold">Cover Letter Generator</h2>
-                    <p className="text-gray-400 text-sm">Generate a tailored cover letter using just the Job Application, or include your Resume for extra personalization.</p>
+                    <p className="text-gray-400 text-sm">Generate a tailored cover letter using just the Job Application, pre-filled with your contact information.</p>
                   </div>
                 </div>
                 <button onClick={handleCoverLetter} disabled={loading || !jdText} className="w-full bg-orange-600 hover:bg-orange-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition">
                   {loading ? "Writing Letter..." : "Generate Cover Letter"}
                 </button>
-                {coverLetter && <div className="mt-8 p-6 bg-gray-950 border border-gray-800 rounded-2xl"><pre className="whitespace-pre-wrap font-sans text-gray-300">{coverLetter}</pre></div>}
+                {coverLetter && (
+                  <div className="mt-8 p-6 bg-gray-950 border border-gray-800 rounded-2xl relative">
+                    <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-800">
+                      <span className="text-xs font-bold uppercase tracking-wider text-orange-400">Ready to Send Cover Letter</span>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(coverLetter);
+                          setCopiedCover(true);
+                          setTimeout(() => setCopiedCover(false), 2000);
+                        }}
+                        className="flex items-center gap-2 text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-1.5 rounded-lg transition font-medium border border-gray-700"
+                      >
+                        {copiedCover ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                        {copiedCover ? "Copied to Clipboard!" : "Copy Cover Letter"}
+                      </button>
+                    </div>
+                    <pre className="whitespace-pre-wrap font-sans text-gray-200 text-base leading-relaxed selection:bg-orange-500 selection:text-white">{coverLetter}</pre>
+                  </div>
+                )}
               </>
             )}
 
