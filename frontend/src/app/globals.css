@@ -1,25 +1,36 @@
 @import "tailwindcss";
 
 @media print {
-  /* Reset height/overflow layout limits during printing to prevent page cutoff */
-  html, body, main, div {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  html, body {
     height: auto !important;
     overflow: visible !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
-  
+
   body * {
     visibility: hidden;
   }
-  
+
   #resume-preview-container, #resume-preview-container * {
     visibility: visible;
   }
-  
+
   #resume-preview-container {
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
+    width: 100% !important;
+    max-width: 210mm !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
     color: black !important;
     background: white !important;
   }
