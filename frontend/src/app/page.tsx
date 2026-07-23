@@ -508,7 +508,7 @@ export default function Home() {
                   )}
                 </div>
                 {tailoredResume && (
-                  <div className="mt-8 bg-white text-black p-8 rounded-xl shadow-inner max-h-[800px] overflow-y-auto">
+                  <div className="mt-8 bg-white text-black p-4 sm:p-6 rounded-xl shadow-inner max-h-[800px] overflow-y-auto">
                     <div id="resume-preview-container" dangerouslySetInnerHTML={{ __html: tailoredResume }} />
                   </div>
                 )}

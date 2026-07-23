@@ -38,17 +38,17 @@ CRITICAL RULES:
          width: 100%;
          max-width: 210mm;
          margin: 0 auto;
-         padding: 8mm 10mm;
+         padding: 4mm 10mm 8mm 10mm;
          box-sizing: border-box;
          font-size: 11pt;
          line-height: 1.3;
        }}
-       .resume-name {{ font-size: 22pt; font-weight: 800; text-align: center; text-transform: uppercase; color: #0f172a; letter-spacing: 0.5px; margin-bottom: 2px; }}
+       .resume-name {{ font-size: 22pt; font-weight: 800; text-align: center; text-transform: uppercase; color: #0f172a; letter-spacing: 0.5px; margin-top: 0; padding-top: 0; margin-bottom: 2px; }}
        .resume-title {{ font-size: 13pt; font-weight: 700; text-align: center; color: #1e40af; margin-bottom: 4px; }}
        .resume-contact-bar {{
          display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px;
          font-size: 9.5pt; color: #334155; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1;
-         padding: 4px 0; margin: 8px 0 12px 0;
+         padding: 4px 0; margin: 6px 0 10px 0;
        }}
        .resume-section-title {{
          text-align: center; font-size: 11.5pt; font-weight: 800; text-transform: uppercase;
@@ -63,7 +63,7 @@ CRITICAL RULES:
        ul.resume-bullets {{ margin: 2px 0 6px 16px; padding: 0; font-size: 10.5pt; list-style-type: disc; }}
        ul.resume-bullets li {{ margin-bottom: 2px; line-height: 1.3; }}
      </style>
-     <!-- Resume Content Here -->
+     <!-- Resume Content Starts Immediately Here Without Top Margin -->
    </div>
    ```
 
